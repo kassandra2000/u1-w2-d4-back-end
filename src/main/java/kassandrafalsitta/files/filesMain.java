@@ -7,10 +7,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -39,11 +36,17 @@ public class filesMain {
     public static void main(String[] args) {
 
         File file = new File("src/main/java/kassandrafalsitta/files/info.txt");
+
         try {
             //aggiunge una lista di file
             FileUtils.writeStringToFile(file, addFileList(productListMix.get()), StandardCharsets.UTF_8, true);
             //aggiunge un solo elemento
             //FileUtils.writeStringToFile(file, addFile(new Product(f.book().title(), "book", Double.parseDouble(f.commerce().price(r.nextDouble(5, 40), r.nextDouble(100, 300)).replace(",", ".")))), StandardCharsets.UTF_8, true);
+
+            //---------------------------lettura------------------------------------
+            String content = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+            readFile(content);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -54,9 +57,13 @@ public class filesMain {
     }
 
     public static String addFileList(List<Product> productList) {
-        String str = productList.stream().map(product -> product.getName() + "@" + product.getCategory() + "@" + product.getPrice() + "@" + product.getId()).collect(Collectors.joining(System.lineSeparator()));
-        ;
-        System.out.println(str);
-        return str;
+        return productList.stream().map(product -> product.getName() + "@" + product.getCategory() + "@" + product.getPrice() + "@" + product.getId()).collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    public static void readFile(String content) {
+        String[] contentArr = content.split(System.lineSeparator());
+        List<Product> listOfProduct = new ArrayList<>();
+        Arrays.stream(contentArr).map(str -> str.split("@")).forEach(strArr -> listOfProduct.add(new Product(strArr[0], strArr[1], Double.parseDouble(strArr[2]))));
+        System.out.println("leggere " + listOfProduct);
     }
 }
